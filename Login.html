@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Sign Up · Modern Auth</title>
+  <!-- Google Font for clean typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #f9faff 0%, #edf0f7 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .auth-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 20, 0.25), 
+                  0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+      padding: 2.2rem 2rem 2.4rem;
+      transition: transform 0.2s ease;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #0b1b33;
+      margin-bottom: 0.3rem;
+    }
+
+    .auth-header p {
+      font-size: 0.95rem;
+      color: #4a5a72;
+      font-weight: 400;
+    }
+
+    /* Tabs for Login / Signup */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(230, 236, 248, 0.7);
+      padding: 0.35rem;
+      border-radius: 3rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.7rem 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      border-radius: 2.5rem;
+      color: #3c4d65;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #0b1b33;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+      font-weight: 600;
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.6);
+      color: #1f2b3e;
+    }
+
+    /* Forms */
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      transition: opacity 0.2s ease;
+    }
+
+    .auth-form.hidden {
+      display: none;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .input-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #2e405b;
+      margin-left: 0.2rem;
+      letter-spacing: -0.01em;
+    }
+
+    .input-group input {
+      padding: 0.9rem 1.2rem;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      border: 1.5px solid #dde3ed;
+      border-radius: 1.5rem;
+      outline: none;
+      transition: all 0.2s ease;
+      color: #0d1c2f;
+      font-weight: 400;
+      width: 100%;
+    }
+
+    .input-group input::placeholder {
+      color: #9aaabb;
+      font-weight: 400;
+    }
+
+    .input-group input:focus {
+      border-color: #a5b9d6;
+      box-shadow: 0 0 0 4px rgba(165, 185, 214, 0.2);
+    }
+
+    .input-group input:hover {
+      border-color: #b8c8de;
+    }
+
+    .forgot-password {
+      text-align: right;
+      font-size: 0.8rem;
+      margin-top: -0.3rem;
+    }
+
+    .forgot-password a {
+      color: #3f5e85;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    .forgot-password a:hover {
+      color: #1b2e48;
+      text-decoration: underline;
+    }
+
+    /* Primary button */
+    .btn-primary {
+      background: #1a2a41;
+      color: #ffffff;
+      border: none;
+      padding: 0.95rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      border-radius: 2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: -0.01em;
+      margin-top: 0.4rem;
+      box-shadow: 0 10px 20px -8px rgba(18, 38, 66, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      background: #0f1e31;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 24px -8px rgba(18, 38, 66, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 6px 12px -6px rgba(18, 38, 66, 0.3);
+    }
+
+    /* Signup specific spacing */
+    .terms {
+      font-size: 0.75rem;
+      text-align: center;
+      color: #5e6f87;
+      margin-top: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .terms a {
+      color: #2e4a70;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .terms a:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #8698af;
+      font-size: 0.75rem;
+      margin: 0.5rem 0 0.2rem;
+      letter-spacing: 0.3px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #d7e0eb;
+    }
+
+    .divider span {
+      padding: 0 0.8rem;
+      font-weight: 400;
+    }
+
+    /* Demo note (since actual backend is absent) */
+    .demo-note {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      text-align: center;
+      color: #8e9eb1;
+      border-top: 1px solid #e3eaf3;
+      padding-top: 1.2rem;
+      font-weight: 400;
+    }
+
+    .demo-note code {
+      background: #ecf1f8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.5rem;
+      font-size: 0.7rem;
+      color: #2b3f5b;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 1.6rem 1.4rem 2rem;
+        border-radius: 1.8rem;
+      }
+      .auth-header h1 {
+        font-size: 1.6rem;
+      }
+      .btn-primary {
+        padding: 0.85rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Welcome back</h1>
+      <p>Log in or create your account</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" id="loginTab" role="tab" aria-selected="true" aria-controls="loginForm">Log in</button>
+      <button class="tab-btn" id="signupTab" role="tab" aria-selected="false" aria-controls="signupForm">Sign up</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="auth-form" autocomplete="on">
+      <div class="input-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+      </div>
+      <div class="input-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <div class="forgot-password">
+        <a href="#" tabindex="0">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn-primary">Log in</button>
+      <div class="terms">
+        By continuing, you agree to our <a href="#">Terms</a> & <a href="#">Privacy Policy</a>.
+      </div>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signupForm" class="auth-form hidden" autocomplete="on">
+      <div class="input-group">
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+      </div>
+      <div class="input-group">
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" name="password" placeholder="Create a strong password" autocomplete="new-password" required>
+      </div>
+      <div class="input-group">
+        <label for="signup-confirm">Confirm password</label>
+        <input type="password" id="signup-confirm" name="confirm" placeholder="Confirm your password" autocomplete="new-password" required>
+      </div>
+      <button type="submit" class="btn-primary">Create account</button>
+      <div class="terms">
+        By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+      </div>
+    </form>
+
+    <div class="divider">
+      <span>or continue with</span>
+    </div>
+    <div style="display: flex; gap: 0.8rem; justify-content: center; margin-top: 0.5rem;">
+      <button type="button" style="background: #fff; border: 1.5px solid #dde3ed; border-radius: 2rem; padding: 0.7rem 1.5rem; font-size: 0.85rem; font-weight: 500; color: #1f2b3e; cursor: pointer; flex: 1; transition: all 0.2s;">Google</button>
+      <button type="button" style="background: #fff; border: 1.5px solid #dde3ed; border-radius: 2rem; padding: 0.7rem 1.5rem; font-size: 0.85rem; font-weight: 500; color: #1f2b3e; cursor: pointer; flex: 1; transition: all 0.2s;">GitHub</button>
+    </div>
+
+    <div class="demo-note">
+      ⚡ Demo only · No data is stored or sent. Use any email & password.
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const loginTab = document.getElementById('loginTab');
+      const signupTab = document.getElementById('signupTab');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+
+      // Tab switching function
+      function setActiveTab(activeTab) {
+        if (activeTab === 'login') {
+          loginTab.classList.add('active');
+          signupTab.classList.remove('active');
+          loginTab.setAttribute('aria-selected', 'true');
+          signupTab.setAttribute('aria-selected', 'false');
+          loginForm.classList.remove('hidden');
+          signupForm.classList.add('hidden');
+        } else {
+          signupTab.classList.add('active');
+          loginTab.classList.remove('active');
+          signupTab.setAttribute('aria-selected', 'true');
+          loginTab.setAttribute('aria-selected', 'false');
+          signupForm.classList.remove('hidden');
+          loginForm.classList.add('hidden');
+        }
+      }
+
+      // Event listeners for tabs
+      loginTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        setActiveTab('login');
+      });
+
+      signupTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        setActiveTab('signup');
+      });
+
+      // Handle login form submission (prevent actual navigation)
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        if (!email || !password) {
+          alert('Please enter both email and password.');
+          return;
+        }
+        alert(`🔐 (Demo) Login attempt\nEmail: ${email}\nPassword: ${password}\n\nNo credentials are sent or stored.`);
+        // You could add redirect or further logic here
+      });
+
+      // Handle signup form submission with password match check
+      signupForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        const confirm = document.getElementById('signup-confirm').value;
+
+        if (!email || !password || !confirm) {
+          alert('Please fill in all fields.');
+          return;
+        }
+        if (password !== confirm) {
+          alert('Passwords do not match. Please try again.');
+          return;
+        }
+        if (password.length < 6) {
+          alert('For security, use a password with at least 6 characters (demo only).');
+          return;
+        }
+
+        alert(`✨ (Demo) Sign up successful!\nEmail: ${email}\nPassword: ${password}\n\nNo account is created – this is a frontend preview.`);
+        // Optionally switch to login tab after signup
+        setActiveTab('login');
+        // Prefill login email for convenience
+        document.getElementById('login-email').value = email;
+        document.getElementById('signup-email').value = '';
+        document.getElementById('signup-password').value = '';
+        document.getElementById('signup-confirm').value = '';
+      });
+
+      // Add small hover effect to social buttons (inline styles already, but just a nice touch)
+      const socialButtons = document.querySelectorAll('div[style*="display: flex; gap: 0.8rem;"] button');
+      socialButtons.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          btn.style.background = '#f5f8ff';
+          btn.style.borderColor = '#b8c8de';
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.background = '#ffffff';
+          btn.style.borderColor = '#dde3ed';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
